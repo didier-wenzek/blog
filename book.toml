@@ -1,0 +1,6 @@
+[book]
+authors = ["Didier Wenzek"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Exploring functional programming and database design"
