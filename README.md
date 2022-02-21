@@ -26,4 +26,4 @@ Several systems are built on this idea: [Irmin](https://irmin.org/), [Datomic](h
 On the strength of these successes, I'm convinced that many pearls are still to be discovered.
 And I have many promising ideas I would like to share!
 
-- [Motivation](./001_motivation.md)
+- [Motivation](src/001_motivation.md)

@@ -17,7 +17,7 @@ Somehow the abstraction is broken and one has to rebuild it around incompatible 
 
 ## Can databases be less monolithic but still efficient?
 
-Databases implement a powerful abstraction to let the users manipulate the data independently of the mechanisms actually used to process them.
+The abstraction implemented by databases let the users manipulate the data independently of the mechanisms actually used to process them.
 The user is given query expression power over data with a simple, uniform and natural shape;
 while the engine can use the most appropriate representations even if complex, ad-hoc or opaque.
 
@@ -26,6 +26,7 @@ However, this abstraction establishes a barrier that is more than inconvenient.
 * Data outside the database are not first-class citizens and have first to be imported even for a basic query.
   Query processing is independent of the actual data layout, but this layout is chosen by the engine's designers, not the users.
   Exploratory of large datasets would be easier with the ability to directly query these datasets using the original formats.
+  This is also the core issues when you have to combine two specialized databases in your application: each excludes the data of the other.
 * Computations inside the database are more constrained than outside.
   And this is made worse by SQL being not extensible with libraries.
   To manipulate new data kinds, one has to wait for these to be added by the database editors.
@@ -39,11 +40,10 @@ However, this abstraction establishes a barrier that is more than inconvenient.
   to encapsulate external data sources or to introduce new database operators.
 
 On the other side, database engines are monolithic for a reason.
-The core properties, a database must guaranty, are transverse.
-Durability, consistency, availability and performance must be addressed at the scale of the whole system.
-For instance, a query plan optimizer combines aspects related to query semantics,
-with performance data of the misc operators and storage layouts
-as well as with statistics on the data distribution.
+The essential properties that a database must guarantee are transversal. 
+Durability, consistency, availability and performance must be considered system-wide.
+For example, a query plan optimizer combines aspects related to query semantics,
+with operator performance data as well as statistics on the data distribution. 
 How can a query optimizer work in a more open setting with user defined data layouts and operators?
 
 Different approaches can be taken.
@@ -59,7 +59,7 @@ Different approaches can be taken.
    One can also use a system like Spark or Flink to distribute computations over independent data sources.  
    
 3. Finally, one can also build a database engine specifically designed for the application at hand. 
-   For that to be realistic, such a bespoke database needs to be built using core components for the key aspects as storage, query optimization, query processing, transactions ...
+   For that to be realistic, such a bespoke database needs to be built using building blocks components for key aspects as storage, query optimization, query processing, transactions ...
    But, how can be such components designed and composed, given the transversal nature of the key database properties?  
 
 Despite the apparent obstacles, this is that third direction that I propose to explore.
