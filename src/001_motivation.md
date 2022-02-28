@@ -34,8 +34,8 @@ However, this abstraction establishes a barrier that is more than inconvenient.
 * There is a chasm between the internal and external concepts.
   What is visible at the surface of a database are essentially abstractions:
   tables manipulated with operators of the relational algebra.
-  Under the hood, components are of a wholly different nature and level of abstraction
-  - files, pages, caches, indexes, redo logs, locks ...
+  Under the hood, components are of a wholly different nature and level of abstraction:
+  files, pages, caches, indexes, redo logs, locks ...
   Having intermediate abstraction levels would help advanced users
   to encapsulate external data sources or to introduce new database operators.
 
@@ -68,46 +68,39 @@ Despite the apparent obstacles, this is that third direction that I propose to e
 
 What I want to explore is the idea to use modules à la SML/OCaml to build a database as an assemblage of data modules.
 
-An OCaml module is a compilation unit which encapsulates types and values behind a signature that defines what is accessible from the outside.
-The signature also gives the types of the public values, data and functions, so these values can be used from other modules and the modules combined into larger ones.
+An OCaml module is a compilation unit that encapsulates types and values behind a signature that defines what is accessible from the outside,
+so these types and values can be used from other modules and the modules combined into larger ones.
 Notably, a signature can abstract the actual type of values, by not providing the actual representations,
 still letting the other modules use these values consistently.
-For instance, in the context of a database, one can imagine a module that contains indexed values and exposes functions to efficiently access these values
+More specifically, in the context of a database, one can imagine a module that contains indexed values and exposes functions to efficiently access these values
 without providing the internal representation of the dataset and indexes.
 
 
-The idea is to __abstract a dataset__ as a module that provides not only the data but also the mechanisms to process these data as well type and cost information:
+The idea is to __abstract a dataset__ as a module that provides not only the data but also the mechanisms to process these data as well as type and cost information.
+In this setting, a data module contains:
 
-* inter-related values - the __actual content__ of the dataset,
+* inter-related values forming the __actual content__ of the dataset including indexes,
 * a __schema__ describing the types of these values and their relationships,
-* __accessor functions__ to efficiently retrieve specific subset of the values,
-* indexes and caches - abstracted by the accessor functions,
+* __accessor functions__ to efficiently retrieve specific subsets of the values,
 * __cost information__ for the accessor functions.
 
+The challenge is then to design these modules so:
 
-### Abstracting Entities & Binary Relations
+* datasets can be combined into larger ones,
+* queries can be written over a combination of datasets using the individual schemas to check the soundness of these queries,
+* queries can be written independently of the actual storage layout of the data,
+* query plans can be built as a combination of accessor functions,
+* query plans can be optimized using individual cost information.
 
-```
-Relation(A,B) := module {
-    filter: (A,B) -> Boolean
-    pairs: [(A,B)]
-    values_of: A -> [B]
-    keys_of: B -> [A]
-    keys: [A]
-    values: [A]
-}
-```
+The roadmap I propose is:
 
-```
-Entity(E) := abstract type only known at the storage level
-```
+* to use the OCaml type system to represent a database schema using abstract types for the entities
+  and binary-relations to navigate between entities and properties,
+  i.e. using a statically typed data model akin to the 
+ [entity–relationship model](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model),
+* to use a combination of collection values, indexes, and functions to implement binary-relations
+  with different constraints, capabilities, and efficiency but the same external interpretation
+* to leverage the OCaml module system to build applications from modules independently written
+  and defining the schema, the storage layer, the application queries, and the query engine.
 
-```
-Index(A,B) := module {
-    open: resource -> Relation(A,B)
-}
-```
-
-```
-Database := Set of indexes
-```
+These ideas are explored in more detail in this [prototype](https://github.com/didier-wenzek/data_module)
