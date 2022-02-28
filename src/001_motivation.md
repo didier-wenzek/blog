@@ -92,12 +92,12 @@ The challenge is then to design these modules so:
 * query plans can be built as a combination of accessor functions,
 * query plans can be optimized using individual cost information.
 
-The roadmap I propose is:
+The roadmap I propose for that is:
 
 * to use the OCaml type system to represent a database schema using abstract types for the entities
   and binary-relations to navigate between entities and properties,
   i.e. using a statically typed data model akin to the 
- [entity–relationship model](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model),
+ [entity-relationship model](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model),
 * to use a combination of collection values, indexes, and functions to implement binary-relations
   with different constraints, capabilities, and efficiency but the same external interpretation
 * to leverage the OCaml module system to build applications from modules independently written
